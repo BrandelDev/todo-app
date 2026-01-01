@@ -8,6 +8,7 @@ import { IonIcon, IonLabel, IonCheckbox, IonItem, IonList } from "@ionic/angular
   imports: [IonIcon, IonLabel, IonCheckbox, IonItem, IonList]
 })
 export class TaskComponent implements OnInit {
+  
 
   constructor() { }
 

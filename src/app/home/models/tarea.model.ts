@@ -8,8 +8,8 @@ export interface Tarea {
   descripcion?: string;
   completada: boolean;
   prioridad: 'baja' | 'media' | 'alta';
-  fechaVencimiento?: FirestoreDate;
+  fechaVencimiento?: FirestoreDate | null;
   creadaEn: FirestoreDate;
   actualizadaEn: FirestoreDate;
-  etiquetas?: string[];
+  etiqueta?: string | null;
 }

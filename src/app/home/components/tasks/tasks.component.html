@@ -1,9 +1,9 @@
 <ion-list>
-  @for (group of tasksGrouped$ | async; track group.label) {
+  @for (group of tasksGrouped$ | async; track $index) {
     <ion-item-divider>
       <ion-label>{{ group.label }}</ion-label>
     </ion-item-divider>
-    @for (tarea of group.items; track tarea.id) {
+    @for (tarea of group.items; track tarea.id ?? $index) {
       <ion-item>
         <ion-checkbox
           slot="start"
@@ -22,6 +22,7 @@
         </ion-label>
 
         <ion-icon
+        [routerLink]="['/detalle-tarea', tarea.id]"
           slot="end"
           name="chevron-forward-outline">
         </ion-icon>
@@ -29,12 +30,6 @@
     }
   }
 </ion-list>
-<div class="load-more">
-  <ion-button size="small" fill="outline" (click)="loadMore()">
-    Cargar mas
-  </ion-button>
-</div>
-
 @if(isLoading){
 <app-loader></app-loader>
 }

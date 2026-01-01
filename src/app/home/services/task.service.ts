@@ -3,6 +3,7 @@ import {
   Firestore,
   addDoc,
   collection,
+  deleteDoc,
   getDocs,
   limit,
   doc,
@@ -13,6 +14,8 @@ import {
 } from '@angular/fire/firestore';
 import type { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import { from, map, Observable } from 'rxjs';
+import { collectionData } from '@angular/fire/firestore';
+import { docData, doc as docRef } from '@angular/fire/firestore';
 
 import { Tarea } from '../models/tarea.model';
 
@@ -23,10 +26,10 @@ export class TaskService {
 
   private readonly firestore = inject(Firestore);
 
-  createTask(tarea: Tarea) {
+  async createTask(tarea: Tarea) {
     const tareasRef = collection(this.firestore, 'tareas');
     const now = new Date();
-    return addDoc(tareasRef, {
+    const ref = await addDoc(tareasRef, {
       titulo: tarea.titulo,
       descripcion: tarea.descripcion ?? '',
       prioridad: tarea.prioridad,
@@ -36,6 +39,8 @@ export class TaskService {
       updatedAt: tarea.actualizadaEn ?? now,
       selectedTag: tarea.etiqueta ?? null,
     });
+    await updateDoc(doc(this.firestore, 'tareas', ref.id), { id: ref.id });
+    return ref;
   }
 
   async listTasksPage(
@@ -102,6 +107,63 @@ export class TaskService {
         return { items, lastDoc: nextCursor };
       })
     );
+  }
+
+  listTasksRealtime$(): Observable<Tarea[]> {
+    const tareasRef = collection(this.firestore, 'tareas');
+    const q = query(tareasRef, orderBy('createdAt', 'desc'));
+    return collectionData(q, { idField: 'id' }).pipe(
+      map((docs) =>
+        docs.map((data: any) => ({
+          id: data.id,
+          titulo: data.titulo,
+          descripcion: data.descripcion,
+          completada: data.completed ?? false,
+          prioridad: data.prioridad,
+          fechaVencimiento: data.fechaVencimiento ?? null,
+          creadaEn: data.createdAt ?? null,
+          actualizadaEn: data.updatedAt ?? null,
+          etiqueta: data.selectedTag ?? null,
+        }))
+      )
+    );
+  }
+
+  getTaskById$(id: string): Observable<Tarea | null> {
+    const ref = docRef(this.firestore, 'tareas', id);
+    return docData(ref, { idField: 'id' }).pipe(
+      map((data: any) => ({
+        id: data.id,
+        titulo: data.titulo,
+        descripcion: data.descripcion,
+        completada: data.completed ?? false,
+        prioridad: data.prioridad,
+        fechaVencimiento: data.fechaVencimiento ?? null,
+        creadaEn: data.createdAt ?? null,
+        actualizadaEn: data.updatedAt ?? null,
+        etiqueta: data.selectedTag ?? null,
+      }))
+    );
+  }
+
+  async updateTask(
+    id: string,
+    tarea: Pick<Tarea, 'titulo' | 'descripcion' | 'prioridad' | 'fechaVencimiento' | 'etiqueta'>
+  ) {
+    const tareaRef = doc(this.firestore, 'tareas', id);
+    return updateDoc(tareaRef, {
+      titulo: tarea.titulo,
+      descripcion: tarea.descripcion ?? '',
+      prioridad: tarea.prioridad,
+      fechaVencimiento: tarea.fechaVencimiento ?? null,
+      selectedTag: tarea.etiqueta ?? null,
+      updatedAt: new Date(),
+    });
+  }
+
+  deleteTask(id: string) {
+    const tareaRef = doc(this.firestore, 'tareas', id);
+    return deleteDoc(tareaRef);
   }
 
   toggleComplete(id: string, completada: boolean) {

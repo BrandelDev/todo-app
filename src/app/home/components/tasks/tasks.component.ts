@@ -1,25 +1,32 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonButton, IonIcon, IonLabel, IonCheckbox, IonItem, IonItemDivider, IonList } from "@ionic/angular/standalone";
-import { BehaviorSubject, map, mergeScan, Observable, Subscription, tap } from 'rxjs';
-import type { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+import { map, Observable, Subscription } from 'rxjs';
 
 import { TaskService } from '../../services/task.service';
 import { Tarea } from '../../models/tarea.model';
 import { LoaderComponent } from "src/app/core/components/loader/loader.component";
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
   styleUrls: ['./tasks.component.css'],
   standalone: true,
-  imports: [CommonModule, IonButton, IonIcon, IonLabel, IonCheckbox, IonItem, IonItemDivider, IonList, LoaderComponent]
+  imports: [
+    CommonModule,
+    IonIcon,
+    IonLabel,
+    IonCheckbox,
+    IonItem,
+    IonItemDivider,
+    IonList,
+    LoaderComponent,
+    RouterLink
+  ]
 })
 export class TaskComponent {
-  private readonly pageSize = 10;
-  private lastDoc: QueryDocumentSnapshot<DocumentData> | null = null;
   private readonly _taskService = inject(TaskService);
-  private loadMore$ = new BehaviorSubject<void>(undefined);
 
   isLoading: boolean = false;
   tasks$!: Observable<Tarea[]>;
@@ -32,41 +39,23 @@ export class TaskComponent {
   }
 
   getTareas() {
-    this.isLoading = true
-    this.tasks$ = this.loadMore$.pipe(
-      mergeScan(
-        (acc: Tarea[]) =>
-          this._taskService.listTasksPage$(this.pageSize, this.lastDoc).pipe(
-            tap((page) => {
-              console.log('Page loaded:')
-              console.log(page)
-              this.isLoading = false;
-              this.lastDoc = page.lastDoc;
-            }),
-            map((page) => [...acc, ...page.items])
-          ),
-        [] as Tarea[]
-      )
-    );
+    this.isLoading = true;
+    this.tasks$ = this._taskService.listTasksRealtime$();
     this.tasksGrouped$ = this.tasks$.pipe(map((items) => this.groupByDate(items)));
+    this.subscription.push(
+      this.tasks$.subscribe(() => {
+        this.isLoading = false;
+      })
+    );
   }
 
   constructor() { }
-
-  loadMore(): void {
-    this.loadMore$.next();
-  }
 
   onToggle(tarea: Tarea, checked: boolean): void {
     if (!tarea.id) {
       return;
     }
     this._taskService.toggleComplete(tarea.id, checked);
-  }
-
-  ngOnDestroy(): void {
-    this.subscription.forEach((sub) => sub.unsubscribe());
-
   }
 
   private groupByDate(items: Tarea[]): TaskGroup[] {
@@ -116,6 +105,10 @@ export class TaskComponent {
       day: '2-digit',
       month: 'short',
     }).format(date);
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.forEach((sub) => sub.unsubscribe());
   }
 }
 

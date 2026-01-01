@@ -19,6 +19,8 @@ import {
   moonOutline,
   sunnyOutline,
   checkmarkDoneOutline,
+  chevronForwardOutline,
+  trashOutline,
 } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
 
@@ -48,7 +50,9 @@ export class AppComponent {
       'settings-outline': settingsOutline,
       'moon-outline': moonOutline,
       'sunny-outline': sunnyOutline,
-      'checkmark-done-outline':checkmarkDoneOutline
+      'checkmark-done-outline':checkmarkDoneOutline,
+      'chevron-forward-outline': chevronForwardOutline,
+      'trash-outline': trashOutline
     });
   }
 }

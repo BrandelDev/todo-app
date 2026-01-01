@@ -50,8 +50,6 @@ export class NewTaskComponent {
   selectedTag: string = '';
   isFormInvalid: boolean = false;
 
-  @Output() create = new EventEmitter<Tarea>();
-  @Output() cancel = new EventEmitter<void>();
 
   constructor() {
     this.newTaskForm = this._fb.group({
@@ -94,7 +92,6 @@ export class NewTaskComponent {
 
   onCancel(): void {
     this._location.back();
-    this.cancel.emit();
   }
 
   private async newTask(tarea: Tarea): Promise<void> {
@@ -107,7 +104,7 @@ export class NewTaskComponent {
     } catch (error) {
       console.error('Error creando tarea', error);
     } finally {
-      this.isLoading = false;         // 🟢 termina
+      this.isLoading = false;       
     }
   }
 

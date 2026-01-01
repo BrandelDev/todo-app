@@ -18,9 +18,7 @@ bootstrapApplication(AppComponent, {
        apiKey: "AIzaSyBgMXkj-KlvYmxWlsQBYmr2pPqF5EcCDY8", 
        authDomain: "todo-mobile-app-7ad8a.firebaseapp.com", 
        messagingSenderId: "935753410244", 
-       measurementId: "G-HLG67LL3N6", 
-       projectNumber: "935753410244", 
-       version: "2" 
+       measurementId: "G-HLG67LL3N6"
       })), 
       provideFirestore(() => getFirestore()), 
       provideRemoteConfig(() => getRemoteConfig())

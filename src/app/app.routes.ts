@@ -10,6 +10,10 @@ export const routes: Routes = [
     loadComponent: () => import('./home/components/new-task/new-task.component').then((m) => m.NewTaskComponent),
   },
   {
+    path: 'configuracion',
+    loadComponent: () => import('./config-app/config-app.component').then((m) => m.ConfigAppComponent),
+  },
+  {
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',

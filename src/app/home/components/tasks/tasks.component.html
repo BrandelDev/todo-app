@@ -1,26 +1,32 @@
 <ion-list>
-  @for (tarea of tasks$ | async; track tarea.id) {
-    <ion-item>
-      <ion-checkbox
-        slot="start"
-        [checked]="tarea.completada">
-      </ion-checkbox>
+  @for (group of tasksGrouped$ | async; track group.label) {
+    <ion-item-divider>
+      <ion-label>{{ group.label }}</ion-label>
+    </ion-item-divider>
+    @for (tarea of group.items; track tarea.id) {
+      <ion-item>
+        <ion-checkbox
+          slot="start"
+          [checked]="tarea.completada"
+          (ionChange)="onToggle(tarea, $event.detail.checked)">
+        </ion-checkbox>
 
-      <ion-label>
-        <h2>{{ tarea.titulo }}</h2>
+        <ion-label>
+          <h2>{{ tarea.titulo }}</h2>
 
-        @if (tarea.descripcion) {
-          <p>{{ tarea.descripcion }}</p>
-        } @else {
-          <p>Sin descripción</p>
-        }
-      </ion-label>
+          @if (tarea.descripcion) {
+            <p>{{ tarea.descripcion }}</p>
+          } @else {
+            <p>Sin descripcion</p>
+          }
+        </ion-label>
 
-      <ion-icon
-        slot="end"
-        name="chevron-forward-outline">
-      </ion-icon>
-    </ion-item>
+        <ion-icon
+          slot="end"
+          name="chevron-forward-outline">
+        </ion-icon>
+      </ion-item>
+    }
   }
 </ion-list>
 <div class="load-more">
@@ -28,3 +34,7 @@
     Cargar mas
   </ion-button>
 </div>
+
+@if(isLoading){
+<app-loader></app-loader>
+}

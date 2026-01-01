@@ -7,6 +7,7 @@ import { Tarea } from '../../models/tarea.model';
 import { Location } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { LoaderComponent } from "src/app/core/components/loader/loader.component";
+import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-new-task',
@@ -63,14 +64,32 @@ export class NewTaskComponent {
 
   }
   async onSubmit(): Promise<void> {
-    this.isFormInvalid = true;
+    // Marca el formulario como tocado para mostrar errores
+    this.newTaskForm.markAllAsTouched();
+
     if (this.newTaskForm.invalid) {
+      this.isFormInvalid = true;
       return;
     }
 
-    const tarea = this.newTaskForm.value as Tarea;
+    this.isFormInvalid = false;
 
-    await this.newTask(tarea);
+    const formValue = this.newTaskForm.value;
+
+    const tarea: Tarea = {
+      ...formValue,
+      fechaVencimiento: formValue.fechaVencimiento
+        ? Timestamp.fromDate(new Date(formValue.fechaVencimiento))
+        : null,
+      createdAt: Timestamp.now(),
+      completed: false
+    };
+
+    try {
+      await this.newTask(tarea);
+    } catch (error) {
+      console.error('Error creando la tarea:', error);
+    }
   }
 
   onCancel(): void {
@@ -80,12 +99,13 @@ export class NewTaskComponent {
 
   private async newTask(tarea: Tarea): Promise<void> {
     try {
-      this.isLoading = true;        // ⏳ inicia
+      this.isLoading = true;
+      console.log('Creando tarea...');
+      console.log(tarea);
       await this._taskService.createTask(tarea);
-      this._location.back();        // ✅ éxito
+      this._location.back();
     } catch (error) {
       console.error('Error creando tarea', error);
-      // aquí puedes mostrar toast / alert
     } finally {
       this.isLoading = false;         // 🟢 termina
     }

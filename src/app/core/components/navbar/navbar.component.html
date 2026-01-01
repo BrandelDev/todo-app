@@ -1,11 +1,8 @@
 <nav class="navbar" aria-label="Main">
-  <a class="nav-item" href="#" aria-label="Tareas">
+  <a [routerLink]="'/home'" class="nav-item" href="#" aria-label="Tareas">
     <ion-icon name="checkmark-done-outline" aria-hidden="true"></ion-icon>
   </a>
-  <a class="nav-item" href="#" aria-label="Calendario">
-    <ion-icon name="calendar-outline" aria-hidden="true"></ion-icon>
-  </a>
-  <a class="nav-item" href="#" aria-label="Configuracion">
+  <a [routerLink]="'/configuracion'" class="nav-item" href="#" aria-label="Configuracion">
     <ion-icon name="settings-outline" aria-hidden="true"></ion-icon>
   </a>
 </nav>

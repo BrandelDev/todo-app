@@ -5,9 +5,11 @@ import {
   collection,
   getDocs,
   limit,
+  doc,
   orderBy,
   query,
   startAfter,
+  updateDoc,
 } from '@angular/fire/firestore';
 import type { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import { from, map, Observable } from 'rxjs';
@@ -23,7 +25,17 @@ export class TaskService {
 
   createTask(tarea: Tarea) {
     const tareasRef = collection(this.firestore, 'tareas');
-    return addDoc(tareasRef, tarea);
+    const now = new Date();
+    return addDoc(tareasRef, {
+      titulo: tarea.titulo,
+      descripcion: tarea.descripcion ?? '',
+      prioridad: tarea.prioridad,
+      fechaVencimiento: tarea.fechaVencimiento ?? null,
+      completed: tarea.completada ?? false,
+      createdAt: tarea.creadaEn ?? now,
+      updatedAt: tarea.actualizadaEn ?? now,
+      selectedTag: tarea.etiqueta ?? null,
+    });
   }
 
   async listTasksPage(
@@ -33,15 +45,25 @@ export class TaskService {
     const tareasRef = collection(this.firestore, 'tareas');
     const baseQuery = query(
       tareasRef,
-      orderBy('creadaEn', 'desc'),
+      orderBy('createdAt', 'desc'),
       limit(pageSize)
     );
     const pageQuery = lastDoc ? query(baseQuery, startAfter(lastDoc)) : baseQuery;
     const snapshot = await getDocs(pageQuery);
-    const items = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...(doc.data() as Tarea),
-    }));
+    const items = snapshot.docs.map((doc) => {
+      const data = doc.data() as any;
+      return {
+        id: doc.id,
+        titulo: data.titulo,
+        descripcion: data.descripcion,
+        completada: data.completed ?? false,
+        prioridad: data.prioridad,
+        fechaVencimiento: data.fechaVencimiento ?? null,
+        creadaEn: data.createdAt ?? null,
+        actualizadaEn: data.updatedAt ?? null,
+        etiqueta: data.selectedTag ?? null,
+      } as Tarea;
+    });
     const nextCursor = snapshot.docs.length > 0 ? snapshot.docs[snapshot.docs.length - 1] : null;
     return { items, lastDoc: nextCursor };
   }
@@ -53,16 +75,26 @@ export class TaskService {
     const tareasRef = collection(this.firestore, 'tareas');
     const baseQuery = query(
       tareasRef,
-      orderBy('creadaEn', 'desc'),
+      orderBy('createdAt', 'desc'),
       limit(pageSize)
     );
     const pageQuery = lastDoc ? query(baseQuery, startAfter(lastDoc)) : baseQuery;
     return from(getDocs(pageQuery)).pipe(
       map((snapshot) => {
-        const items = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...(doc.data() as Tarea),
-        }));
+        const items = snapshot.docs.map((doc) => {
+          const data = doc.data() as any;
+          return {
+            id: doc.id,
+            titulo: data.titulo,
+            descripcion: data.descripcion,
+            completada: data.completed ?? false,
+            prioridad: data.prioridad,
+            fechaVencimiento: data.fechaVencimiento ?? null,
+            creadaEn: data.createdAt ?? null,
+            actualizadaEn: data.updatedAt ?? null,
+            etiqueta: data.selectedTag ?? null,
+          } as Tarea;
+        });
         const nextCursor =
           snapshot.docs.length > 0
             ? snapshot.docs[snapshot.docs.length - 1]
@@ -70,6 +102,11 @@ export class TaskService {
         return { items, lastDoc: nextCursor };
       })
     );
+  }
+
+  toggleComplete(id: string, completada: boolean) {
+    const tareaRef = doc(this.firestore, 'tareas', id);
+    return updateDoc(tareaRef, { completed: completada, updatedAt: new Date() });
   }
 
 }

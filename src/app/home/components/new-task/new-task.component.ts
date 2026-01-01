@@ -1,11 +1,12 @@
 import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonButton, IonContent, IonDatetime, IonFooter, IonHeader, IonInput, IonItem, IonLabel, IonList, IonModal, IonSelect, IonSelectOption, IonTextarea, IonTitle, IonToolbar, IonDatetimeButton } from '@ionic/angular/standalone';
 
 import { Tarea } from '../../models/tarea.model';
 import { Location } from '@angular/common';
 import { TaskService } from '../../services/task.service';
+import { LoaderComponent } from "src/app/core/components/loader/loader.component";
 
 @Component({
   selector: 'app-new-task',
@@ -30,74 +31,64 @@ import { TaskService } from '../../services/task.service';
     IonHeader,
     IonTitle,
     IonToolbar,
-    IonDatetimeButton
+    IonDatetimeButton,
+    LoaderComponent,
+    ReactiveFormsModule
   ],
 })
 export class NewTaskComponent {
 
+  private readonly _fb = inject(FormBuilder);
   private readonly _location = inject(Location);
   private readonly _taskService = inject(TaskService);
+
+  newTaskForm!: FormGroup;
+  isLoading: boolean = false;
+  showErrors: boolean = false;
+  tagOptions = ['UX', 'UI', 'Entrevista', 'Dev', 'Personal'];
+  selectedTag: string = '';
+  isFormInvalid: boolean = false;
 
   @Output() create = new EventEmitter<Tarea>();
   @Output() cancel = new EventEmitter<void>();
 
-  tagOptions = ['UX', 'UI', 'Entrevista', 'Dev', 'Personal'];
-  selectedTag: string = '';
+  constructor() {
+    this.newTaskForm = this._fb.group({
+      titulo: ['', Validators.required],
+      descripcion: ['', Validators.required],
+      prioridad: ['media', Validators.required],
+      fechaVencimiento: [null, Validators.required],
+      selectedTag: ['', Validators.required]
+    });
 
-  form = {
-    titulo: '',
-    descripcion: '',
-    prioridad: 'media' as Tarea['prioridad'],
-    fechaVencimiento: null as string | null,
-    selectedTag: ''
-  };
-
+  }
   async onSubmit(): Promise<void> {
-    if (!this.form.titulo.trim()) {
+    this.isFormInvalid = true;
+    if (this.newTaskForm.invalid) {
       return;
     }
 
-    const now = new Date();
-    const fecha = this.form.fechaVencimiento
-      ? new Date(this.form.fechaVencimiento)
-      : null;
-    const etiqueta = this.selectedTag ? this.selectedTag : null;
-
-    const tarea: Tarea = {
-      titulo: this.form.titulo.trim(),
-      descripcion: this.form.descripcion.trim() || undefined,
-      completada: false,
-      prioridad: this.form.prioridad,
-      fechaVencimiento: fecha,
-      creadaEn: now,
-      actualizadaEn: now,
-      etiqueta,
-    };
+    const tarea = this.newTaskForm.value as Tarea;
 
     await this.newTask(tarea);
-    this.create.emit(tarea);
-    this.resetForm();
   }
 
   onCancel(): void {
-    this.resetForm();
     this._location.back();
     this.cancel.emit();
   }
 
-  private resetForm(): void {
-    this.form = {
-      titulo: '',
-      descripcion: '',
-      prioridad: 'media',
-      fechaVencimiento: '',
-      selectedTag: '',
-    };
-  }
-
   private async newTask(tarea: Tarea): Promise<void> {
-    await this._taskService.createTask(tarea);
-    this._location.back();
+    try {
+      this.isLoading = true;        // ⏳ inicia
+      await this._taskService.createTask(tarea);
+      this._location.back();        // ✅ éxito
+    } catch (error) {
+      console.error('Error creando tarea', error);
+      // aquí puedes mostrar toast / alert
+    } finally {
+      this.isLoading = false;         // 🟢 termina
+    }
   }
 
 }

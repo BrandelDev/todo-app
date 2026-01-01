@@ -1,0 +1,30 @@
+<ion-list>
+  @for (tarea of tasks$ | async; track tarea.id) {
+    <ion-item>
+      <ion-checkbox
+        slot="start"
+        [checked]="tarea.completada">
+      </ion-checkbox>
+
+      <ion-label>
+        <h2>{{ tarea.titulo }}</h2>
+
+        @if (tarea.descripcion) {
+          <p>{{ tarea.descripcion }}</p>
+        } @else {
+          <p>Sin descripción</p>
+        }
+      </ion-label>
+
+      <ion-icon
+        slot="end"
+        name="chevron-forward-outline">
+      </ion-icon>
+    </ion-item>
+  }
+</ion-list>
+<div class="load-more">
+  <ion-button size="small" fill="outline" (click)="loadMore()">
+    Cargar mas
+  </ion-button>
+</div>

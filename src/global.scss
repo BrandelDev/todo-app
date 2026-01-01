@@ -36,3 +36,9 @@
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
 
+.field-invalid {
+  --highlight-color-focused: #d14343;
+  --highlight-color-invalid: #d14343;
+  --border-color: #d14343;
+  color: #d14343;
+}

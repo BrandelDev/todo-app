@@ -4,8 +4,8 @@ import { NavbarComponent } from "../core/components/navbar/navbar.component";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TopBarFilterComponent } from "../core/components/top-bar-filter/top-bar-filter.component";
-import { TaskComponent } from "./components/task/task.component";
 import { RouterLink } from '@angular/router';
+import { TaskComponent } from './components/tasks/tasks.component';
 
 @Component({
   selector: 'app-home',

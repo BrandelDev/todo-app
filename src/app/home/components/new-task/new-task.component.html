@@ -10,53 +10,54 @@
       <h2>Nueva tarea</h2>
       <p>Captura lo importante en segundos.</p>
     </div>
+    <form [formGroup]="newTaskForm">
+      <ion-list lines="none">
+        <ion-item [class.field-invalid]="this.isFormInvalid && newTaskForm.get('titulo')?.invalid">
+          <ion-label position="stacked">Titulo</ion-label>
+          <ion-input formControlName="titulo" placeholder="Ej. Preparar entrevista" type="text"></ion-input>
+        </ion-item>
 
-    <ion-list lines="none">
-      <ion-item>
-        <ion-label position="stacked">Titulo</ion-label>
-        <ion-input [(ngModel)]="form.titulo" placeholder="Ej. Preparar entrevista" type="text"></ion-input>
-      </ion-item>
+        <ion-item [class.field-invalid]="this.isFormInvalid && newTaskForm.get('descripcion')?.invalid">
+          <ion-label position="stacked">Descripcion</ion-label>
+          <ion-textarea formControlName="descripcion" auto-grow="true" placeholder="Notas opcionales"></ion-textarea>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">Descripcion</ion-label>
-        <ion-textarea [(ngModel)]="form.descripcion" auto-grow="true" placeholder="Notas opcionales"></ion-textarea>
-      </ion-item>
+        <ion-item [class.field-invalid]="this.isFormInvalid && newTaskForm.get('prioridad')?.invalid">
+          <ion-label position="stacked">Prioridad</ion-label>
+          <ion-select formControlName="prioridad" interface="popover">
+            <ion-select-option value="baja">Baja</ion-select-option>
+            <ion-select-option value="media">Media</ion-select-option>
+            <ion-select-option value="alta">Alta</ion-select-option>
+          </ion-select>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">Prioridad</ion-label>
-        <ion-select [(ngModel)]="form.prioridad" interface="popover">
-          <ion-select-option value="baja">Baja</ion-select-option>
-          <ion-select-option value="media">Media</ion-select-option>
-          <ion-select-option value="alta">Alta</ion-select-option>
-        </ion-select>
-      </ion-item>
+        <ion-item [class.field-invalid]="this.isFormInvalid && newTaskForm.get('fechaVencimiento')?.invalid">
+          <ion-label position="stacked">Fecha límite</ion-label>
+          <ion-datetime-button datetime="fecha-limite">
+          </ion-datetime-button>
+        </ion-item>
 
-      <ion-item>
-        <ion-label position="stacked">Fecha límite</ion-label>
-        <ion-datetime-button datetime="fecha-limite">
-        </ion-datetime-button>
-      </ion-item>
+        <ion-modal [keepContentsMounted]="true">
+          <ng-template>
+            <ion-datetime id="fecha-limite" presentation="date" formControlName="fechaVencimiento">
+            </ion-datetime>
+          </ng-template>
+        </ion-modal>
+        <ion-item [class.field-invalid]="showErrors && !selectedTag">
+          <ion-label position="stacked">Etiquetas</ion-label>
 
-      <ion-modal [keepContentsMounted]="true">
-        <ng-template>
-          <ion-datetime id="fecha-limite" presentation="date" [(ngModel)]="form.fechaVencimiento">
-          </ion-datetime>
-        </ng-template>
-      </ion-modal>
-      <ion-item>
-        <ion-label position="stacked">Etiquetas</ion-label>
-
-        <ion-list>
-          <ion-item>
-            <ion-select [(ngModel)]="selectedTag" aria-label="Etiquetas" placeholder="Selecciona una etiqueta">
-              @for(item of tagOptions; track item) {
-              <ion-select-option [value]="item">{{ item }}</ion-select-option>
-              }
-            </ion-select>
-          </ion-item>
-        </ion-list>
-      </ion-item>
-    </ion-list>
+          <ion-list [class.field-invalid]="this.isFormInvalid && newTaskForm.get('selectedTag')?.invalid"> 
+            <ion-item>
+              <ion-select formControlName="selectedTag" aria-label="Etiquetas" placeholder="Selecciona una etiqueta">
+                @for(item of tagOptions; track item) {
+                <ion-select-option [value]="item">{{ item }}</ion-select-option>
+                }
+              </ion-select>
+            </ion-item>
+          </ion-list>
+        </ion-item>
+      </ion-list>
+    </form>
   </section>
 
 
@@ -74,3 +75,6 @@
     </div>
   </ion-toolbar>
 </ion-footer>
+@if(isLoading){
+<app-loader></app-loader>
+}

@@ -1,5 +1,5 @@
 import { Component, DestroyRef, effect, inject, input, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { LoaderComponent } from "src/app/core/components/loader/loader.component";
 import { IonFooter, IonToolbar, IonButtons, IonButton, IonIcon, IonList, IonItem, IonSelect, IonSelectOption, IonLabel, IonModal, IonDatetime, IonDatetimeButton, IonTextarea, IonInput, IonContent, IonHeader, IonTitle } from "@ionic/angular/standalone";
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -7,12 +7,17 @@ import { TaskService } from '../../services/task.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { Timestamp } from '@angular/fire/firestore';
+import { Observable } from 'rxjs';
+
+import { CategoriaService } from 'src/app/config-app/services/categoria.service';
+import { Categoria } from 'src/app/config-app/models/categoria.model';
 
 @Component({
   selector: 'app-task-details',
   templateUrl: './task-details.component.html',
   styleUrls: ['./task-details.component.css'],
   imports: [
+    CommonModule,
     LoaderComponent,
     IonToolbar,
     IonButtons,
@@ -42,9 +47,11 @@ export class TaskDetailsComponent implements OnInit {
   private readonly _destroyRef = inject(DestroyRef);
   private readonly _activateRoute = inject(ActivatedRoute);
   private readonly _location = inject(Location);
+  private readonly _categoriaService = inject(CategoriaService);
 
   taskDetailsForm!: FormGroup;
   taskId: string | null = null;
+  categorias$!: Observable<Categoria[]>;
 
   isLoading: boolean = false;
   showErrors: boolean = false;
@@ -58,6 +65,7 @@ export class TaskDetailsComponent implements OnInit {
       fechaVencimiento: [null],
       selectedTag: ['']
     });
+    this.categorias$ = this._categoriaService.listCategorias$();
       
       const id = this._activateRoute.snapshot.paramMap.get('id');
       if (!id) {

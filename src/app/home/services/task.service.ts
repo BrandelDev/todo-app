@@ -11,6 +11,7 @@ import {
   query,
   startAfter,
   updateDoc,
+  where,
 } from '@angular/fire/firestore';
 import type { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
 import { from, map, Observable } from 'rxjs';
@@ -112,6 +113,29 @@ export class TaskService {
   listTasksRealtime$(): Observable<Tarea[]> {
     const tareasRef = collection(this.firestore, 'tareas');
     const q = query(tareasRef, orderBy('createdAt', 'desc'));
+    return collectionData(q, { idField: 'id' }).pipe(
+      map((docs) =>
+        docs.map((data: any) => ({
+          id: data.id,
+          titulo: data.titulo,
+          descripcion: data.descripcion,
+          completada: data.completed ?? false,
+          prioridad: data.prioridad,
+          fechaVencimiento: data.fechaVencimiento ?? null,
+          creadaEn: data.createdAt ?? null,
+          actualizadaEn: data.updatedAt ?? null,
+          etiqueta: data.selectedTag ?? null,
+        }))
+      )
+    );
+  }
+
+  listTasksRealtimeByCategoria$(categoria: string | null): Observable<Tarea[]> {
+    const tareasRef = collection(this.firestore, 'tareas');
+    console.log('listTasksRealtimeByCategoria$ called with categoria:', categoria);
+    const q = categoria && categoria !== 'all'
+      ? query(tareasRef, where('selectedTag', '==', categoria), orderBy('createdAt', 'desc'))
+      : query(tareasRef, orderBy('createdAt', 'desc'));
     return collectionData(q, { idField: 'id' }).pipe(
       map((docs) =>
         docs.map((data: any) => ({

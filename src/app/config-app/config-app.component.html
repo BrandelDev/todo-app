@@ -1,3 +1,45 @@
-<p>
-  config-app works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Categorias</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <section class="new-task">
+    <div class="intro">
+      <h2>Categorias</h2>
+      <p>Crea y organiza tus etiquetas.</p>
+    </div>
+    <ion-list class="category-list">
+      @for (categoria of categorias$ | async; track categoria.id ?? categoria.nombre) {
+      <ion-item>
+        <ion-label>{{ categoria.nombre }}</ion-label>
+        <ion-button fill="clear" color="danger" slot="end" (click)="onDelete(categoria)">
+          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-item>
+      }
+    </ion-list>
+    <form [formGroup]="categoriaForm">
+      <ion-list lines="none">
+        <ion-item [class.field-invalid]="this.isFormInvalid && categoriaForm.get('nombre')?.invalid">
+          <ion-label position="stacked">Nombre</ion-label>
+          <ion-input formControlName="nombre" placeholder="Ej. UX" type="text"></ion-input>
+        </ion-item>
+      </ion-list>
+    </form>
+  </section>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <div class="actions">
+      <ion-button fill="clear" size="small" (click)="onCancel()">
+        Cancelar
+      </ion-button>
+      <ion-button size="small" class="primary" (click)="onSubmit()">
+        Guardar
+      </ion-button>
+    </div>
+  </ion-toolbar>
+</ion-footer>

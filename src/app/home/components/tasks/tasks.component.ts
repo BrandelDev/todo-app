@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonButton, IonIcon, IonLabel, IonCheckbox, IonItem, IonItemDivider, IonList } from "@ionic/angular/standalone";
-import { map, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, map, Observable, Subscription, switchMap } from 'rxjs';
 
 import { TaskService } from '../../services/task.service';
 import { Tarea } from '../../models/tarea.model';
@@ -27,11 +27,16 @@ import { RouterLink } from '@angular/router';
 })
 export class TaskComponent {
   private readonly _taskService = inject(TaskService);
+  private readonly _filter$ = new BehaviorSubject<string>('all');
 
   isLoading: boolean = false;
   tasks$!: Observable<Tarea[]>;
   tasksGrouped$!: Observable<TaskGroup[]>;
   subscription: Subscription[] = [];
+
+  @Input() set filter(value: string) {
+    this._filter$.next(value || 'all');
+  }
 
 
   ngOnInit(): void {
@@ -39,8 +44,11 @@ export class TaskComponent {
   }
 
   getTareas() {
+    console.log('getTareas called');
     this.isLoading = true;
-    this.tasks$ = this._taskService.listTasksRealtime$();
+    this.tasks$ = this._filter$.pipe(
+      switchMap((filter) => this._taskService.listTasksRealtimeByCategoria$(filter))
+    );
     this.tasksGrouped$ = this.tasks$.pipe(map((items) => this.groupByDate(items)));
     this.subscription.push(
       this.tasks$.subscribe(() => {

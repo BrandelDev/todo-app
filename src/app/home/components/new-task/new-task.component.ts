@@ -2,12 +2,15 @@ import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonButton, IonContent, IonDatetime, IonFooter, IonHeader, IonInput, IonItem, IonLabel, IonList, IonModal, IonSelect, IonSelectOption, IonTextarea, IonTitle, IonToolbar, IonDatetimeButton } from '@ionic/angular/standalone';
+import { Observable } from 'rxjs';
 
 import { Tarea } from '../../models/tarea.model';
 import { Location } from '@angular/common';
 import { TaskService } from '../../services/task.service';
 import { LoaderComponent } from "src/app/core/components/loader/loader.component";
 import { Timestamp } from '@angular/fire/firestore';
+import { CategoriaService } from 'src/app/config-app/services/categoria.service';
+import { Categoria } from 'src/app/config-app/models/categoria.model';
 
 @Component({
   selector: 'app-new-task',
@@ -42,11 +45,12 @@ export class NewTaskComponent {
   private readonly _fb = inject(FormBuilder);
   private readonly _location = inject(Location);
   private readonly _taskService = inject(TaskService);
+  private readonly _categoriaService = inject(CategoriaService);
 
   newTaskForm!: FormGroup;
   isLoading: boolean = false;
   showErrors: boolean = false;
-  tagOptions = ['UX', 'UI', 'Entrevista', 'Dev', 'Personal'];
+  categorias$!: Observable<Categoria[]>;
   selectedTag: string = '';
   isFormInvalid: boolean = false;
 
@@ -59,6 +63,7 @@ export class NewTaskComponent {
       fechaVencimiento: [null, Validators.required],
       selectedTag: ['', Validators.required]
     });
+    this.categorias$ = this._categoriaService.listCategorias$();
 
   }
   async onSubmit(): Promise<void> {

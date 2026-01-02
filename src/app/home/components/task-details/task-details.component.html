@@ -11,10 +11,6 @@
 
 <ion-content [fullscreen]="true">
   <section class="new-task">
-    <div class="intro">
-      <h2>Nueva tarea</h2>
-      <p>Captura lo importante en segundos.</p>
-    </div>
     <form [formGroup]="taskDetailsForm">
       <ion-list lines="none">
         <ion-item>
@@ -54,6 +50,9 @@
           <ion-list>
             <ion-item>
               <ion-select formControlName="selectedTag" aria-label="Etiquetas" placeholder="Selecciona una etiqueta">
+                @for(categoria of categorias$ | async; track categoria.id ?? categoria.nombre) {
+                  <ion-select-option [value]="categoria.nombre">{{ categoria.nombre }}</ion-select-option>
+                }
               </ion-select>
             </ion-item>
           </ion-list>

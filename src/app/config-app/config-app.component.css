@@ -1,0 +1,42 @@
+.new-task {
+  padding: 16px;
+}
+
+.intro h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+}
+
+.intro p {
+  margin: 0 0 12px;
+  color: var(--color-text-muted, #5c5c68);
+  font-size: 13px;
+}
+
+ion-item {
+  --background: transparent;
+  --padding-start: 0;
+  --inner-padding-end: 0;
+}
+
+ion-label {
+  color: var(--color-text-muted, #5c5c68);
+  font-size: 12px;
+  letter-spacing: 0.2px;
+}
+
+.category-list {
+  margin-top: 12px;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 12px;
+}
+
+.primary {
+  --background: var(--color-primary, #a100ff);
+  --color: #ffffff;
+}

@@ -49,8 +49,8 @@
           <ion-list [class.field-invalid]="this.isFormInvalid && newTaskForm.get('selectedTag')?.invalid"> 
             <ion-item>
               <ion-select formControlName="selectedTag" aria-label="Etiquetas" placeholder="Selecciona una etiqueta">
-                @for(item of tagOptions; track item) {
-                <ion-select-option [value]="item">{{ item }}</ion-select-option>
+                @for(categoria of categorias$ | async; track categoria.id ?? categoria.nombre) {
+                  <ion-select-option [value]="categoria.nombre">{{ categoria.nombre }}</ion-select-option>
                 }
               </ion-select>
             </ion-item>

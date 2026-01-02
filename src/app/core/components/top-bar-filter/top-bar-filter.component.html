@@ -1,13 +1,11 @@
-  <ion-segment [(ngModel)]="filter">
+  <ion-segment [(ngModel)]="filter" scrollable="true" (ionChange)="onFilterChange($event.detail.value)">
     <ion-segment-button value="all">
       <ion-label>Todas</ion-label>
     </ion-segment-button>
 
-    <ion-segment-button value="today">
-      <ion-label>Hoy</ion-label>
-    </ion-segment-button>
-
-    <ion-segment-button value="upcoming">
-      <ion-label>Proximas</ion-label>
-    </ion-segment-button>
+    @for (categoria of categorias$ | async; track categoria.id ?? categoria.nombre) {
+      <ion-segment-button [value]="categoria.nombre">
+        <ion-label>{{ categoria.nombre }}</ion-label>
+      </ion-segment-button>
+    }
   </ion-segment>

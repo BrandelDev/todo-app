@@ -81,6 +81,7 @@ export class NewTaskComponent {
 
     const tarea: Tarea = {
       ...formValue,
+      etiqueta: formValue.selectedTag ?? null,
       fechaVencimiento: formValue.fechaVencimiento
         ? Timestamp.fromDate(new Date(formValue.fechaVencimiento))
         : null,

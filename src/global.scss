@@ -11,6 +11,7 @@
 
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
+@import "./_variables";
 
 /* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
@@ -36,9 +37,100 @@
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
 
+:root {
+  --ion-color-primary: var(--color-primary);
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-secondary: var(--color-secondary);
+  --ion-color-secondary-contrast: #1b1b1f;
+  --ion-color-success: var(--color-success);
+  --ion-color-danger: var(--color-danger);
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+ion-app {
+  background: var(--color-bg);
+}
+
+ion-content {
+  --background: var(--color-bg);
+  color: var(--color-text);
+}
+
+ion-toolbar {
+  --background: var(--color-secondary);
+  --color: var(--color-text);
+  border-bottom: 1px solid var(--color-border);
+}
+
+ion-footer ion-toolbar {
+  --background: var(--color-surface);
+  --color: var(--color-text);
+  border-top: 1px solid var(--color-border);
+  border-bottom: none;
+}
+
+ion-title {
+  color: var(--color-text);
+}
+
+ion-list {
+  background: transparent;
+}
+
+ion-item {
+  --background: var(--color-surface);
+  --border-color: var(--color-border);
+  --highlight-color-focused: var(--color-primary);
+  --highlight-color-valid: var(--color-success);
+}
+
+.flat-item {
+  --background: transparent;
+  --border-color: var(--color-border);
+}
+
+ion-input,
+ion-textarea,
+ion-select {
+  --color: var(--color-text);
+  --placeholder-color: var(--color-text-muted);
+}
+
+ion-segment {
+  --background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 4px;
+  box-shadow: var(--shadow-soft);
+}
+
+ion-header{
+    --background: black;
+    border-bottom: 1px solid var(--color-border);   
+}
+
+ion-toolbar.translucent {
+    --background: black;
+    backdrop-filter: none;
+}
+
+ion-segment-button {
+  --color: var(--color-text-muted);
+  --background-checked: var(--color-primary);
+}
+
+ion-fab-button {
+  --background: var(--color-primary);
+  --color: #ffffff;
+}
+
 .field-invalid {
-  --highlight-color-focused: #d14343;
-  --highlight-color-invalid: #d14343;
-  --border-color: #d14343;
-  color: #d14343;
+  --highlight-color-focused: var(--color-danger);
+  --highlight-color-invalid: var(--color-danger);
+  --border-color: var(--color-danger);
+  color: var(--color-danger);
 }

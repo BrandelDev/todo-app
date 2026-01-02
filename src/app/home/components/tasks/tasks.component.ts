@@ -49,9 +49,18 @@ export class TaskComponent {
     this.tasks$ = this._filter$.pipe(
       switchMap((filter) => this._taskService.listTasksRealtimeByCategoria$(filter))
     );
+    console.log('Tasks observable set up');
+    console.log(this.tasks$);
     this.tasksGrouped$ = this.tasks$.pipe(map((items) => this.groupByDate(items)));
     this.subscription.push(
       this.tasks$.subscribe(() => {
+        this.isLoading = false;
+      })
+    );
+
+    this.subscription.push(
+      this.tasks$.subscribe((tasks) => {
+        console.log('tasks$', tasks);
         this.isLoading = false;
       })
     );

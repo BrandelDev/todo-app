@@ -131,8 +131,8 @@ export class TaskService {
   }
 
   listTasksRealtimeByCategoria$(categoria: string | null): Observable<Tarea[]> {
+    console.log('Selected tag', categoria)
     const tareasRef = collection(this.firestore, 'tareas');
-    console.log('listTasksRealtimeByCategoria$ called with categoria:', categoria);
     const q = categoria && categoria !== 'all'
       ? query(tareasRef, where('selectedTag', '==', categoria), orderBy('createdAt', 'desc'))
       : query(tareasRef, orderBy('createdAt', 'desc'));

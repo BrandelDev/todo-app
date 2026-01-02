@@ -14,7 +14,7 @@
 }
 
 ion-item {
-  --background: transparent;
+  --background: var(--color-bg, #f7f3fb);
   --padding-start: 0;
   --inner-padding-end: 0;
 }

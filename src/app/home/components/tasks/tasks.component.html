@@ -4,7 +4,7 @@
       <ion-label>{{ group.label }}</ion-label>
     </ion-item-divider>
     @for (tarea of group.items; track tarea.id ?? $index) {
-      <ion-item>
+      <ion-item class="flat-item">
         <ion-checkbox
           slot="start"
           [checked]="tarea.completada"

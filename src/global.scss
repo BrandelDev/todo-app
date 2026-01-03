@@ -35,7 +35,7 @@
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* @import "@ionic/angular/css/palettes/dark.system.css"; */
 
 :root {
   --ion-color-primary: var(--color-primary);
@@ -44,6 +44,7 @@
   --ion-color-secondary-contrast: #1b1b1f;
   --ion-color-success: var(--color-success);
   --ion-color-danger: var(--color-danger);
+  color-scheme: light;
 }
 
 body {
@@ -120,7 +121,6 @@ ion-toolbar.translucent {
 
 ion-segment-button {
   --color: var(--color-text-muted);
-  --background-checked: var(--color-primary);
 }
 
 ion-fab-button {
